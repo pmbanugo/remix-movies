@@ -1,0 +1,6 @@
+/.cache
+/build
+/dist
+/public/build
+/.mf
+.env
