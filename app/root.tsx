@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import Navbar from "./components/Navbar";
 import {
   Links,
   LiveReload,
@@ -27,7 +28,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <Navbar />
+        <div className="p-1.5">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
