@@ -1,20 +1,4 @@
-interface Movie {
-  //TODO: refactor this duplicate type
-  id: number;
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  original_language: string;
-  original_title: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-}
+import type { Movie } from "~/tmdb-client";
 
 type ImageWidth = "185" | "342" | "500" | "780";
 
@@ -28,9 +12,10 @@ export default function Index({
   imageWidth: ImageWidth;
 }) {
   return (
-    <figure className="mx-auto w-40 p-8 md:p-0">
+    <figure className="mx-auto p-8 md:p-0">
       <img
-        className="mx-auto rounded-xl shadow-md  shadow-slate-400 md:h-auto md:w-48"
+        className="mx-auto rounded-xl shadow-md  shadow-slate-400 md:h-auto"
+        // className="mx-auto rounded-xl shadow-md  shadow-slate-400 md:h-auto md:w-48"
         src={`${IMAGE_BASE_URL}/w${imageWidth}/${movie.poster_path}`}
         alt={movie.title}
       />
