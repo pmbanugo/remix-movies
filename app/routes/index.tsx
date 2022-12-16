@@ -1,8 +1,5 @@
 import MovieCard from "~/components/MovieCard";
 import { Root, Viewport, Scrollbar, Thumb } from "@radix-ui/react-scroll-area";
-
-import type { ActionArgs } from "@remix-run/cloudflare";
-import { redirect } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
 import SearchBgImage from "~/images/search-bg-blur.webp";
@@ -19,17 +16,8 @@ export const loader = async () => {
   });
 };
 
-export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
-  const query = formData.get("query");
-  if (query) {
-    return redirect(`/search/${query}`);
-  }
-}
-
 export default function Index() {
   const { popular, upcoming } = useLoaderData<typeof loader>();
-  // console.log({ popular, upcoming });
 
   return (
     <>
@@ -41,7 +29,7 @@ export default function Index() {
           Millions of movie for you to discover and explore!
         </div>
 
-        <Form method="post" className="mt-4">
+        <Form method="get" action="/search" className="mt-4">
           <Search />
         </Form>
       </div>
