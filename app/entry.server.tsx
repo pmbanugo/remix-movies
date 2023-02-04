@@ -1,21 +1,44 @@
 import type { EntryContext } from "@remix-run/cloudflare";
 import { RemixServer } from "@remix-run/react";
-import { renderToString } from "react-dom/server";
+import isbot from "isbot";
+import { renderToReadableStream } from "react-dom/server";
 
-export default function handleRequest(
+const ABORT_DELAY = 5000;
+
+const handleRequest = async (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext
-) {
-  const markup = renderToString(
-    <RemixServer context={remixContext} url={request.url} />
+) => {
+  let didError = false;
+
+  const stream = await renderToReadableStream(
+    <RemixServer
+      context={remixContext}
+      url={request.url}
+      abortDelay={ABORT_DELAY}
+    />,
+    {
+      onError: (error: unknown) => {
+        didError = true;
+        console.error(error);
+
+        // You can also log crash/error report
+      },
+      signal: AbortSignal.timeout(ABORT_DELAY),
+    }
   );
 
-  responseHeaders.set("Content-Type", "text/html");
+  if (isbot(request.headers.get("user-agent"))) {
+    await stream.allReady;
+  }
 
-  return new Response("<!DOCTYPE html>" + markup, {
-    status: responseStatusCode,
+  responseHeaders.set("Content-Type", "text/html");
+  return new Response(stream, {
     headers: responseHeaders,
+    status: didError ? 500 : responseStatusCode,
   });
-}
+};
+
+export default handleRequest;
